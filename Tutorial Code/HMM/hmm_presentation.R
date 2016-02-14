@@ -28,14 +28,14 @@ generatemarkovseq <- function(transitionmatrix, initial_nucleotide, seqlength)
   nucleotides <- c("A", "C", "G", "T")
   mysequence <- character()
   firstnucleotide = initial_nucleotide
-  
-  mysequence[1] <- firstnucleotide
+
+  mysequence[1] <- sample(nucleotides, 1, prob = firstnucleotide)
   for (i in 2:seqlength)
   {
     prevnucleotide <- mysequence[i-1]
     probabilities <- transitionmatrix[prevnucleotide,]
     nucleotide <- sample(nucleotides, 1, prob=probabilities)
-    mysequence[i] <- nucleotide 
+    mysequence[i] <- nucleotide
   }
   return(mysequence)
 }
@@ -45,21 +45,21 @@ generatemarkovseq(mytransitionmatrix, myinitialprobs, 30)
 
 # A Hidden Markov Model of DNA sequence evolution
 
-states <- c("AT-rich", "GC-rich") 
-ATrichprobs <- c(0.7, 0.3) 
-GCrichprobs <- c(0.1, 0.9) 
-thetransitionmatrix <- matrix(c(ATrichprobs, GCrichprobs), 2, 2, byrow = TRUE) 
+states <- c("AT-rich", "GC-rich")
+ATrichprobs <- c(0.7, 0.3)
+GCrichprobs <- c(0.1, 0.9)
+thetransitionmatrix <- matrix(c(ATrichprobs, GCrichprobs), 2, 2, byrow = TRUE)
 rownames(thetransitionmatrix) <- states
 colnames(thetransitionmatrix) <- states
-thetransitionmatrix 
+thetransitionmatrix
 
-nucleotides <- c("A", "C", "G", "T") 
-ATrichstateprobs <- c(0.39, 0.1, 0.1, 0.41) 
-GCrichstateprobs <- c(0.1, 0.41, 0.39, 0.1) 
+nucleotides <- c("A", "C", "G", "T")
+ATrichstateprobs <- c(0.39, 0.1, 0.1, 0.41)
+GCrichstateprobs <- c(0.1, 0.41, 0.39, 0.1)
 theemissionmatrix <- matrix(c(ATrichstateprobs, GCrichstateprobs), 2, 4, byrow = TRUE)
 rownames(theemissionmatrix) <- states
 colnames(theemissionmatrix) <- nucleotides
-theemissionmatrix 
+theemissionmatrix
 
 
 nucleotides = c("A","C","G","T")
@@ -85,28 +85,28 @@ seq = c(seq,new_nucleotide)
 # Function to generate a DNA sequence, given a HMM and the length of the sequence to be generated.
 generatehmmseq <- function(transitionmatrix, emissionmatrix, initial_state, seqlength)
 {
-  nucleotides = c("A", "C", "G", "T")   
-  states = c("AT-rich", "GC-rich") 
-  mysequence = character()             
-  mystates = character()             
+  nucleotides = c("A", "C", "G", "T")
+  states = c("AT-rich", "GC-rich")
+  mysequence = character()
+  mystates = character()
 
   firststate = initial_state
   probabilities = emissionmatrix[firststate,]
   firstnucleotide = sample(nucleotides, 1, prob=probabilities)
-  mysequence[1] = firstnucleotide         
-  mystates[1] = firststate              
-  
+  mysequence[1] = firstnucleotide
+  mystates[1] = firststate
+
   for (i in 2:seqlength)
   {
-    prevstate    <- mystates[i-1]          
+    prevstate    <- mystates[i-1]
     stateprobs   <- transitionmatrix[prevstate,]
     state        <- sample(states, 1, prob=stateprobs)
     probabilities <- emissionmatrix[state,]
     nucleotide   <- sample(nucleotides, 1, prob=probabilities)
-    mysequence[i] <- nucleotide             
-    mystates[i]  <- state     
+    mysequence[i] <- nucleotide
+    mystates[i]  <- state
   }
-  
+
   for (i in 1:length(mysequence))
   {
     nucleotide   <- mysequence[i]
@@ -124,10 +124,10 @@ viterbi <- function(sequence, transitionmatrix, emissionmatrix)
 {
   # Get the names of the states in the HMM:
   states <- rownames(theemissionmatrix)
-  
+
   # Make the Viterbi matrix v:
   v <- makeViterbimat(sequence, transitionmatrix, emissionmatrix)
-  
+
   for( i in 1:(dim(v))[1]){
     print(v[i,])
   }
@@ -137,18 +137,18 @@ makeViterbimat <- function(sequence, transitionmatrix, emissionmatrix)
 {
   v <- matrix(NA, nrow = length(sequence), ncol = dim(transitionmatrix)[1])
   colnames(v) = c('AT-rich','GC-rich')
-  
+
   v[1,'AT-rich'] = 1
   v[1,'GC-rich'] = 0
-  
+
   for (i in 2:length(sequence)) # For each position in the DNA sequence:
   {
     statelprobnucleotidei <- emissionmatrix[1,sequence[i]]
     v[i,1] <-  statelprobnucleotidei * max(v[(i-1),] * transitionmatrix[,1])
-      
+
     statelprobnucleotidei = emissionmatrix[2,sequence[i]]
     v[i,2] <-  statelprobnucleotidei * max(v[(i-1),] * transitionmatrix[,2])
-  
+
   }
   return(v)
 }
