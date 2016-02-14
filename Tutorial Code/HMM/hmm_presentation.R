@@ -30,7 +30,6 @@ generatemarkovseq <- function(transitionmatrix, initial_nucleotide, seqlength)
   firstnucleotide = initial_nucleotide
 
   mysequence[1] <- sample(nucleotides, 1, prob = firstnucleotide)
-  mysequence[1] <- firstnucleotide
   for (i in 2:seqlength)
   {
     prevnucleotide <- mysequence[i-1]
