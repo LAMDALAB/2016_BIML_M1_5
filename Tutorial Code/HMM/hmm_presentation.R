@@ -23,11 +23,10 @@ mytransitionmatrix
 
 # Generating a DNA sequence using a Markov model
 
-generatemarkovseq <- function(transitionmatrix, initial_nucleotide, seqlength)
+generatemarkovseq <- function(transitionmatrix, firstnucleotide, seqlength)
 {
   nucleotides <- c("A", "C", "G", "T")
   mysequence <- character()
-  firstnucleotide = initial_nucleotide
   
   mysequence[1] <- firstnucleotide
   for (i in 2:seqlength)
@@ -40,8 +39,7 @@ generatemarkovseq <- function(transitionmatrix, initial_nucleotide, seqlength)
   return(mysequence)
 }
 
-myinitialprobs <- c(0.25, 0.25, 0.25, 0.25)
-generatemarkovseq(mytransitionmatrix, myinitialprobs, 30)
+generatemarkovseq(mytransitionmatrix, 'A', 30)
 
 # A Hidden Markov Model of DNA sequence evolution
 
